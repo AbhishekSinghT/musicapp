@@ -28,9 +28,6 @@ const ImageScreen = () => {
       </View>
       <ScrollView >
         <ImageBox />
-        {/* <TouchableOpacity onPress={onPress}>
-          <Text>LOGoUT</Text>
-        </TouchableOpacity> */}
         <ImgFooter/>
       </ScrollView>
       <View style={{height:hp('10%')}}>
