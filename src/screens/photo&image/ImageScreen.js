@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useContext } from 'react'
-import { AuthContext } from '../../navigation/authprovider/AuthProvider'
+
 import Greeting from '../../components/title/Title'
 import DrawerBtn from '../../components/button/DrawerBtn';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -10,22 +10,14 @@ import ImgFooter from '../../components/imageContainer/imagefooter/ImgFooter';
 import BottomLine from '../../components/bottomborderline/BottomLine';
 
 
-const ImageScreen = () => {
-  const { user, logout } = useContext(AuthContext)
-  const onPress = () => {
-    Alert.alert(
-      'Log out',
-      'Do you want to logout?',
-      [{ text: 'Cancel', onPress: () => { return null }},
-        {text: 'Confirm', onPress: () => {logout();}}],
-      { cancelable: false })
-  }
+const ImageScreen = ({navigation}) => {
+
   return (
     <>
     <View style={{flex:1}}>
       <View>
         <Greeting name='PHOTOS & ' style={{ height: hp('15%'), backgroundColor: '#0d709e' }} title='IMAGES' />
-        <DrawerBtn />
+        <DrawerBtn onPress={() => navigation.toggleDrawer()} />
       </View>
       <ScrollView >
         <ImageBox />

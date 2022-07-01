@@ -10,13 +10,13 @@ import ListPlay from '../../components/playlists/ListPlay';
 import ListArtist from '../../components/albumlist/ListArtist';
 import BottomLine from '../../components/bottomborderline/BottomLine';
 
-const TrackScreen = () => {
+const TrackScreen = ({navigation}) => {
   return (
     <>
       <View style={{ flex: 1 }}>
         <View>
           <Greeting name='MUSIC ' style={{ height: hp('15%'), backgroundColor: '#0d709e' }} title='TRACKS' />
-          <DrawerBtn />
+          <DrawerBtn onPress={() => navigation.toggleDrawer()} />
         </View>
         <View>
           <SearchBox

@@ -8,7 +8,8 @@ import ListSwipe from '../../components/contactflatlist/ListSwipe';
 import BottomLine from '../../components/bottomborderline/BottomLine'
 import { styles } from './Style';
 
-const ListContact = () => {
+
+const ListContact = ({navigation}) => {
     const [color, setColor] = useState(false)
 
 
@@ -16,7 +17,7 @@ const ListContact = () => {
         <View style={{ flex: 1 }}>
             <View>
                 <Greeting name='CONTACT ' style={styles.icon} title='LIST' />
-                <DrawerBtn   />
+                <DrawerBtn onPress={() => navigation.toggleDrawer()} />
             </View>
             <View>
                 <SearchBox

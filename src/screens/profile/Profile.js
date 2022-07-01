@@ -23,7 +23,7 @@ const Profile = ({ navigation }) => {
       <View style={styles.container}>
           <View style={{flex:1}}> 
             <Greeting name='YOUR ' style={{height:hp('15%'),backgroundColor:'#0d709e'}} title='PROFILE' />
-            <DrawerBtn/>
+            <DrawerBtn onPress={() => navigation.toggleDrawer()} />
          
         <View style={styles.profilecontaine}>
           <View style={{ margin: hp('8%') }}>
