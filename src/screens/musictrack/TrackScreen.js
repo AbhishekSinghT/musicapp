@@ -8,6 +8,7 @@ import Heading from '../../components/customHeading/Heading';
 import { styles } from './Style';
 import ListPlay from '../../components/playlists/ListPlay';
 import ListArtist from '../../components/albumlist/ListArtist';
+import BottomLine from '../../components/bottomborderline/BottomLine';
 
 const TrackScreen = () => {
   return (
@@ -48,6 +49,7 @@ const TrackScreen = () => {
             }
           />
         </View>
+        <BottomLine />
       </View>
     </>
   )

@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   txt: {
     color: '#094a80',
-    fontSize: hp('2.3%'),
+    fontSize: hp('2%'),
     fontWeight: '400'
   },
   borderline: {

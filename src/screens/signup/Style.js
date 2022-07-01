@@ -7,19 +7,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
-  img:{
-    height: hp('16%'),
-    width:wp('30%'),
-    alignSelf:'center',
-    marginTop:hp('6%'),
-    marginBottom:hp('1%'),
-    resizeMode:'contain',
-  },
   line:{
-    borderWidth:hp('0.3%'),
+    backgroundColor:'#fff',
+    height:hp('0.4%'),
     width:wp('35%'),
     alignSelf:'center',
-    marginTop:hp('3%'),
+    margin:hp('1%'),
     borderColor:'#fff'
   },
   logo: {
@@ -29,14 +22,17 @@ export const styles = StyleSheet.create({
     alignSelf:'center'
   },
   btn:{
+    borderRadius:hp('50%'),
     width:wp('16%'),
-    height:hp('9.5%'),
+    height:hp('8%'),
     flexDirection:'column',
     justifyContent:'center',
     resizeMode:'contain',
   },
   btncontainer:{
     alignItems:'center',
+    justifyContent:'center',
+    height:hp('13%'),
   },
   btnSignup:{
     flexDirection:'row',
@@ -45,14 +41,15 @@ export const styles = StyleSheet.create({
   },
   signupText:{
     fontWeight:"700",
-    fontSize: hp('2.5%'),
+    fontSize: hp('2%'),
     color:'#fff'
   },
   acountText:{
-    fontSize: hp('2.5%'), 
+    fontSize: hp('2%'), 
   },
   usericon:{
-    marginTop: hp('6%'),
-    marginBottom: hp('2%'),
+    height:hp('23%'),
+    justifyContent:'flex-end',
+    marginBottom:hp('5%')
   }
 });

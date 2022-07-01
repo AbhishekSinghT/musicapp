@@ -9,6 +9,7 @@ import Greeting from '../../components/title/Title';
 import Inputbox from '../../components/inputbox/InputBox';
 import { AuthContext } from '../../navigation/authprovider/AuthProvider';
 import UserPhoto from '../../components/userphoto/UserPhoto';
+import BottomLine from '../../components/bottomborderline/BottomLine';
 
 const SignUp = ({ navigation }) => {
     const { register } = useContext(AuthContext)
@@ -17,9 +18,9 @@ const SignUp = ({ navigation }) => {
         // register(values.name, values.email, values.password,)
         // Alert.alert('user scusess')
         navigation.navigate('Intro', {
-            name:values.name,
-            email:values.email,
-            password:values.password,
+            name: values.name,
+            email: values.email,
+            password: values.password,
         });
     }
 
@@ -44,20 +45,20 @@ const SignUp = ({ navigation }) => {
     return (
         <>
             <LinearGradient colors={['#0d709e', '#0a86bf', '#09a0e6',]} style={styles.linearGradient}>
-                <KeyboardAwareScrollView>
-                    <Formik
-                        validationSchema={logiSchema}
-                        initialValues={{ email: '', password: '', retypePassword: '', name: '' }}
-                        onSubmit={handleSubmit}
-                    >
-                        {({ handleChange, handleSubmit, values, touched, errors }) => (
-                            <SafeAreaView>
+                <Formik
+                    validationSchema={logiSchema}
+                    initialValues={{ email: '', password: '', retypePassword: '', name: '' }}
+                    onSubmit={handleSubmit}
+                >
+                    {({ handleChange, handleSubmit, values, touched, errors }) => (
+                        <>
+                            <View style={{ flex: 1, }}>
+                                <View style={{flex:1}}>
                                 <View style={styles.usericon}>
                                     <UserPhoto source={require('../../assets/images/user.png')} />
                                 </View>
                                 <Greeting name='CREATE ' title='ACCOUNT' />
-                                <View style={styles.line}>
-                                </View>
+                                <View style={styles.line} />
                                 <View style={{ marginTop: 25 }}>
                                     <Inputbox
                                         put
@@ -98,10 +99,14 @@ const SignUp = ({ navigation }) => {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                            </SafeAreaView>
-                        )}
-                    </Formik>
-                </KeyboardAwareScrollView>
+                                </View>
+                                <View>
+                                    <BottomLine />
+                                </View>
+                            </View>
+                        </>
+                    )}
+                </Formik>
             </LinearGradient>
         </>
     )

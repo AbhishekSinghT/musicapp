@@ -7,18 +7,19 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import ImageBox from '../../components/imageContainer/ImageBox';
 import TabBtn from '../../components/tabcustombtn/TabBtn';
 import ImgFooter from '../../components/imageContainer/imagefooter/ImgFooter';
+import BottomLine from '../../components/bottomborderline/BottomLine';
 
 
 const ImageScreen = () => {
   const { user, logout } = useContext(AuthContext)
-  // const onPress = () => {
-  //   Alert.alert(
-  //     'Log out',
-  //     'Do you want to logout?',
-  //     [{ text: 'Cancel', onPress: () => { return null }},
-  //       {text: 'Confirm', onPress: () => {logout();}}],
-  //     { cancelable: false })
-  // }
+  const onPress = () => {
+    Alert.alert(
+      'Log out',
+      'Do you want to logout?',
+      [{ text: 'Cancel', onPress: () => { return null }},
+        {text: 'Confirm', onPress: () => {logout();}}],
+      { cancelable: false })
+  }
   return (
     <>
     <View style={{flex:1}}>
@@ -36,6 +37,7 @@ const ImageScreen = () => {
       source3={require('../../assets/images/search.png')}
       source4={require('../../assets/images/backarrow.png')}
        />
+       <BottomLine/>
       </View>
       </View>
     </>

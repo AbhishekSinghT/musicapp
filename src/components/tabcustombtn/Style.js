@@ -17,9 +17,9 @@ export const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     img:{
-        height:hp('10%'),
+        height:hp('5%'),
         width:wp('10%'),
-        resizeMode:'contain'
+        resizeMode:'contain',
     }
 
 

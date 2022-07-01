@@ -14,17 +14,16 @@ export const styles = StyleSheet.create({
     },
     btn:{
         borderRadius:wp('50%'),
-        // paddingHorizontal:hp('3.5%'),
         width:wp('25%'),
         margin:hp('2.5%'),
-        height:hp('5%'),
+        height:hp('3.7%'),
         backgroundColor:'#fff',
         justifyContent:'center',
         alignItems:'center'
     },
     btntxt:{
        color:'#094a80',
-       fontSize:hp('2.5%')
+       fontSize:hp('2%')
     },
     contactline: {
         marginTop:hp('2%'),

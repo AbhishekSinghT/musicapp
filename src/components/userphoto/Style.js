@@ -3,8 +3,8 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 
 export const styles = StyleSheet.create({
     img:{
-        height: hp('18%'),
-        width:wp('33%'),
+        height: hp('14%'),
+        width:wp('25%'),
         alignSelf:'center',
         resizeMode:'contain',
       },

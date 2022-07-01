@@ -16,7 +16,7 @@ import { styles } from './Style';
         />
       </View>
       <View>
-        <Text style={styles.inputText}>{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     </>
 

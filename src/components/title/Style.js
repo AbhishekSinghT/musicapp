@@ -9,15 +9,15 @@ export const styles = StyleSheet.create({
     },
     textname:{
         color:'#fff',
-        fontSize: hp('4%'),
+        fontSize: hp('3.3%'),
         fontWeight:'300',
-        marginBottom:hp('1.4%')
+        marginBottom:hp('2%')
     },
     texttitle:{
         color:'#fff',
-        fontSize: hp('4%'),
+        fontSize: hp('3.3%'),
         fontWeight:'900',
-        marginBottom:hp('1.4%')
+        marginBottom:hp('2%')
 
     },
  

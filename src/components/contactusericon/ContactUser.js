@@ -7,7 +7,7 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 const ContactUser = (props) => {
   return (
     <>
-    <TouchableOpacity style={styles.contactuser} >
+    <TouchableOpacity style={styles.contactuser} onPress={props.onPress} >
     <Icon name={props.name} size={widthPercentageToDP('6%')} color="white" style={{alignSelf:'center'}} />
     </TouchableOpacity>
     </>

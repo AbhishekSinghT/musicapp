@@ -14,13 +14,13 @@ const ListPlay = () => {
                     <View style={styles.container}>
                         <Icon name='play' size={hp('3%')} color="#fff" />
                         <Text style={{
-                            color: '#094a80', fontSize: hp('2%'),
+                            color: '#094a80', fontSize: hp('1.5%'),
                             top: hp('4.5%'), fontWeight: '400'
                         }}> {props.song}
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', height: hp('5%') }}>
-                        <Text style={{ color: '#094a80', fontSize: hp('2.3%'), fontWeight: '400' }}>
+                        <Text style={{ color: '#094a80', fontSize: hp('2%'), fontWeight: '400' }}>
                             {props.title}
                         </Text>
                     </View>

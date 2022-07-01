@@ -11,6 +11,7 @@ import { AuthContext } from '../../navigation/authprovider/AuthProvider';
 import Editfav from '../../components/contactuseredit/Editfav';
 import DrawerBtn from '../../components/button/DrawerBtn';
 import { firebase } from '@react-native-firebase/auth';
+import BottomLine from '../../components/bottomborderline/BottomLine';
 
 
 const Profile = ({ navigation }) => {
@@ -19,11 +20,11 @@ const Profile = ({ navigation }) => {
 
   return (
     <>
-      <ScrollView style={styles.container}>
-          <View> 
+      <View style={styles.container}>
+          <View style={{flex:1}}> 
             <Greeting name='YOUR ' style={{height:hp('15%'),backgroundColor:'#0d709e'}} title='PROFILE' />
             <DrawerBtn/>
-          </View>
+         
         <View style={styles.profilecontaine}>
           <View style={{ margin: hp('8%') }}>
             <UserPhoto source={require('../../assets/images/user.png')} />
@@ -34,30 +35,36 @@ const Profile = ({ navigation }) => {
               <Text style={styles.userinfoname} >{user ? user.displayName : null}</Text>
             </View>
             <View style={styles.userinfo}>
-              <Icon name="envelope" size={wp('4.3%')} color="#47dded" />
+              <Icon name="envelope" size={wp('4%')} color="#47dded" />
               <Text style={styles.userinfotext}>{user ? user.email : null}</Text>
             </View>
             <View style={styles.userinfo}>
-              <Icon name="globe" size={wp('5%')} color="#47dded" />
+              <Icon name="globe" size={wp('4.7%')} color="#47dded" />
               <Text style={styles.userinfotext}>www.johnsite.com</Text>
             </View>
             <View style={styles.btncontainer}>
               <TouchableOpacity style={styles.btnpre}>
-                <Text style={styles.btntext}><Icon name="cog" size={hp('1.5%')} color="#de800d" /> preferences</Text>
+              <Icon name="cog" size={hp('1.5%')} color="#de800d" />
+                <Text style={styles.btntext}> preferences</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.btnedit}>
-                <Text style={styles.btntext}><Icon name="pencil" size={hp('1.5%')} color="#de800d" /> edit</Text>
+              <Icon name="pencil" size={hp('1.5%')} color="#de800d" /> 
+                <Text style={styles.btntext}>edit</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        <View style={{
+            backgroundColor: '#fff',
+            height: hp('0.35%'),
+        }} />
         <View style={styles.footer}>
           <MenuList name='camera' title='Photo & Images' onPress={() => navigation.navigate('ImageScreen')}
             source={require('../../assets/images/arrowCircle.png')} />
           <MenuList name='music' title='Music Tracks' onPress={() => navigation.navigate('TrackScreen')}
             source={require('../../assets/images/arrowCircle.png')} />
           <View style={styles.contact}>
-            <MenuList name='user' title='Contact List'
+            <MenuList name='user' title='Contact List' onPress={() => navigation.navigate('ListContact')}
               source={require('../../assets/images/arrowCircle.png')} />
             <View style={styles.favContact}>
               <View style={styles.contactline} />
@@ -80,7 +87,11 @@ const Profile = ({ navigation }) => {
           <MenuList name='envelope' title='Messages'
             source={require('../../assets/images/arrowCircle.png')} />
         </View>
-      </ScrollView>
+        </View>
+        <View>
+        <BottomLine />
+        </View>
+      </View>
     </>
   )
 }
