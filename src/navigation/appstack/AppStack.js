@@ -12,6 +12,8 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
+import Inbox from '../../screens/inboxmessage/Inbox';
+import Player from '../../screens/musicplayer/Player';
 
 
 function CustomDrawerContent(props) {
@@ -46,11 +48,13 @@ const StackNav = ({ route, navigation }) => {
   return (
     <>
 
-      <Stack.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName='Player' screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="ImageScreen" component={ImageScreen} />
         <Stack.Screen name="TrackScreen" component={TrackScreen} />
         <Stack.Screen name="ListContact" component={ListContact} />
+        <Stack.Screen name="Inbox" component={Inbox} />
+        <Stack.Screen name="Player" component={Player} />
       </Stack.Navigator>
     </>
   );
@@ -59,13 +63,17 @@ const StackNav = ({ route, navigation }) => {
 
 export default function AppStack() {
   return (
+    <>
     <Drawer.Navigator useLegacyImplementation
       screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Home" component={StackNav} />
       <Drawer.Screen name="ImageScreen" component={ImageScreen} />
       <Drawer.Screen name="TrackScreen" component={TrackScreen} />
       <Drawer.Screen name="ListContact" component={ListContact} />
+      <Drawer.Screen name="Inbox" component={Inbox} />
+      <Drawer.Screen name="Player" component={Player} />
     </Drawer.Navigator>
+    </>
   );
 }

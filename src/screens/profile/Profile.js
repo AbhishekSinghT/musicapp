@@ -84,7 +84,7 @@ const Profile = ({ navigation }) => {
               <View style={styles.contactline} />
             </View>
           </View>
-          <MenuList name='envelope' title='Messages'
+          <MenuList name='envelope' title='Messages' onPress={() => navigation.navigate('Inbox')}
             source={require('../../assets/images/arrowCircle.png')} />
         </View>
         </View>

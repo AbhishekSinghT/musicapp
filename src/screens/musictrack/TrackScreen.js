@@ -10,7 +10,7 @@ import ListPlay from '../../components/playlists/ListPlay';
 import ListArtist from '../../components/albumlist/ListArtist';
 import BottomLine from '../../components/bottomborderline/BottomLine';
 
-const TrackScreen = ({navigation}) => {
+const TrackScreen = ({ navigation }) => {
   return (
     <>
       <View style={{ flex: 1 }}>
@@ -33,18 +33,17 @@ const TrackScreen = ({navigation}) => {
         <View style={styles.header}>
           <Heading title="Artists" />
         </View>
-        <View style={{flex: 1, margin: 10 }}>
+        <View style={{ flex: 1, margin: 10 }}>
           <FlatList
             ListHeaderComponent={
               <View>
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} /> 
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-                <ListArtist name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
-        
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+                <ListArtist style={{ height: hp('10%') }} bottomstyle={{ display: "none" }} logo={{ display: "none" }} name='music' title='Music Tracks' albums="1 Album" songs='23 songs' source={require('../../assets/images/playOutline.png')} />
+
               </View>
             }
           />

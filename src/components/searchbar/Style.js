@@ -21,9 +21,11 @@ export const styles = StyleSheet.create({
         marginLeft:wp('3%'),
     },
     btncontainer:{
-        flexDirection:'row',
-        justifyContent:'space-evenly',
-        width:wp('25%'),
+        marginHorizontal:hp('0.8%'),
+       
+    },
+    btncontainer1:{
+        marginHorizontal:hp('0.8%')
     },
     img: {
         height: hp('7%'),
@@ -39,6 +41,9 @@ export const styles = StyleSheet.create({
         fontSize: hp('2.5%'),
         color: '#fff',
     },
+    btnCircle:{
+        
+    }
 
 
 });
