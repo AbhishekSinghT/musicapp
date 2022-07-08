@@ -14,6 +14,7 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import Inbox from '../../screens/inboxmessage/Inbox';
 import Player from '../../screens/musicplayer/Player';
+import Post from '../../screens/wirtepost/Post';
 
 function CustomDrawerContent(props) {
   const {user, logout} = useContext(AuthContext);
@@ -54,7 +55,7 @@ const StackNav = ({route, navigation}) => {
   return (
     <>
       <Stack.Navigator
-        initialRouteName="Player"
+        initialRouteName="Post"
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="ImageScreen" component={ImageScreen} />
@@ -62,6 +63,7 @@ const StackNav = ({route, navigation}) => {
         <Stack.Screen name="ListContact" component={ListContact} />
         <Stack.Screen name="Inbox" component={Inbox} />
         <Stack.Screen name="Player" component={Player} />
+        <Stack.Screen name="Post" component={Post} />
       </Stack.Navigator>
     </>
   );
@@ -80,6 +82,7 @@ export default function AppStack() {
         <Drawer.Screen name="ListContact" component={ListContact} />
         <Drawer.Screen name="Inbox" component={Inbox} />
         <Drawer.Screen name="Player" component={Player} />
+        <Drawer.Screen name="Post" component={Post} />
       </Drawer.Navigator>
     </>
   );

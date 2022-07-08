@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: wp('15'),
     alignItems: 'center',
-    marginTop: hp('2%'),
+    // marginTop: hp('1%'),
   },
   bottombtn: {
     flexDirection: 'row',
@@ -88,7 +88,6 @@ export const styles = StyleSheet.create({
     fontSize: hp('2.3%'),
     fontWeight: '900',
   },
-
   borderline: {
     backgroundColor: '#030b4a',
     width: wp('0.8%'),
@@ -97,8 +96,7 @@ export const styles = StyleSheet.create({
     marginRight: wp('2%'),
   },
   progressBar: {
-    flex: 1,
-    height: hp('10%'),
+    height: hp('2%'),
     flexDirection: 'row',
   },
   playback: {
