@@ -20,7 +20,7 @@ const TabBtn = props => {
         />
       </TouchableOpacity>
       <View style={styles.contactline} />
-      <TouchableOpacity style={styles.btnCircle}>
+      <TouchableOpacity style={styles.btnCircle} onPress={props.TakePhoto}>
         <MaterialCommunityIcons
           name={props.name2}
           size={hp('3%')}
@@ -28,7 +28,7 @@ const TabBtn = props => {
         />
       </TouchableOpacity>
       <View style={styles.contactline} />
-      <TouchableOpacity style={styles.btnCircle}>
+      <TouchableOpacity style={styles.btnCircle} onPress={props.ChoosePhoto}>
         <Ionicons
           name={props.name3}
           size={hp('3%')}
