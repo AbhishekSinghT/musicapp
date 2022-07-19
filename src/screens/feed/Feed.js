@@ -21,7 +21,6 @@ import {styles} from './Style';
 import moment from 'moment';
 
 const list = [];
-
 const Feed = ({navigation}) => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +30,7 @@ const Feed = ({navigation}) => {
       try {
         await firestore()
           .collection('posts')
+          .orderBy('postTime', 'desc')
           .get()
           .then(querySnapshot => {
             querySnapshot.forEach(doc => {
