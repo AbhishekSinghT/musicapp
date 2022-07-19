@@ -15,7 +15,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
-  listenOrientationChange,
 } from 'react-native-responsive-screen';
 import BottomLine from '../../components/bottomborderline/BottomLine';
 import TabBtn from '../../components/tabcustombtn/TabBtn';
@@ -24,13 +23,14 @@ import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-crop-picker';
 import {LogBox} from 'react-native';
 import {AuthContext} from '../../navigation/authprovider/AuthProvider';
+// import DocumentPicker from 'react-native-document-picker';
 
 LogBox.ignoreLogs([
   'ViewPropTypes will be removed',
   'ColorPropType will be removed',
 ]);
-let arr = [];
-const Post = ({navigation}, image) => {
+let imageArr = [];
+const Post = ({navigation}) => {
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -38,21 +38,32 @@ const Post = ({navigation}, image) => {
   const [headline, setHeadline] = useState(true);
   const [value, setValue] = useState('');
   const [focus, setFocus] = useState('');
+  const [userData, setUserData] = useState(null);
 
   const {user} = useContext(AuthContext);
 
-  const takePhotoFromCamera = () => {
-    ImagePicker.openCamera({
-      multiple: true,
-      width: 300,
-      height: 300,
-      cropping: true,
-    }).then(response => {
-      console.log(response);
-      const imageUri =
-        Platform.OS === 'ios' ? response.sourceURL : response.path;
-      console.log(imageUri);
-    });
+  const takePhotoFromCamera = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.type.allFile],
+      });
+      console.log();
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+      } else {
+        throw err;
+      }
+    }
+    // ImagePicker.openCamera({
+    //   multiple: true,
+    //   width: 300,
+    //   height: 300,
+    //   cropping: true,
+    // }).then(image => {
+    //   const imageUri = image.path;
+    //   setAddimages(imageUri);
+    //   console.log(imageUri);
+    // });
   };
   const handleRemoveItem = index => {
     console.log(index);
@@ -105,6 +116,20 @@ const Post = ({navigation}, image) => {
       setHeadline(false);
     }
   };
+
+  const getUser = async () => {
+    const currentUser = await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          // console.log('User Data', userData.displayName);
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+
   const submitPost = async () => {
     const newData = images.map(item => {
       return item.path;
@@ -117,13 +142,16 @@ const Post = ({navigation}, image) => {
         await moveFile(newData[i]);
       }
     }
+    getUser();
     firestore()
       .collection('posts')
       .add({
-        userId: user.displayName,
+        profile: userData ? userData.userImg : null,
+        userName: userData ? userData.displayName : null,
+        userId: user.uid,
         heading: focus,
         post: value,
-        postImg: arr,
+        postImg: imageArr,
         postTime: firestore.Timestamp.fromDate(new Date()),
         likes: null,
         comments: null,
@@ -169,22 +197,42 @@ const Post = ({navigation}, image) => {
       setAddimages(null);
       setImages([]);
       setUploading(false);
-      arr.push(url);
+      imageArr.push(url);
     } catch (e) {
       console.log(e);
       return null;
     }
   };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setValue('');
+      setFocus('');
+      setAddimages(null);
+      setImages([]);
+    });
+    return unsubscribe;
 
+    // getUser();
+  }, [navigation]);
   const SendBtn = () => {
     return (
       <>
-        <TouchableOpacity onPress={submitPost} style={styles.btnsend}>
-          <Text
-            style={{color: '#fff', fontSize: hp('3.2%'), fontWeight: '300'}}>
-            Send
-          </Text>
-        </TouchableOpacity>
+        {addImages || value || focus ? (
+          <>
+            <TouchableOpacity onPress={submitPost} style={styles.btnsend}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: hp('3.2%'),
+                  fontWeight: '300',
+                }}>
+                Send
+              </Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>{null}</>
+        )}
       </>
     );
   };
@@ -274,40 +322,46 @@ const Post = ({navigation}, image) => {
           <Text style={{fontSize: 15, color: 'black'}}>
             Character Left : {value.length === null ? 0 : value.length} /300
           </Text>
-          <View style={{height: 130}}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={images}
-              keyExtractor={(item, index) => String(index)}
-              renderItem={({item, index}) => {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      height: 100,
-                      width: 100,
-                      margin: 5,
-                    }}>
-                    <Image
-                      style={{
-                        height: 100,
-                        width: 100,
-                        borderRadius: 30,
-                        padding: 3,
-                      }}
-                      source={{uri: item.path}}
-                    />
-                    <TouchableOpacity
-                      onPress={() => handleRemoveItem(index)}
-                      style={styles.btn}>
-                      <Text style={styles.btntext}>REMOVE</Text>
-                    </TouchableOpacity>
-                  </View>
-                );
-              }}
-            />
-          </View>
+          {images == false ? (
+            <>{null}</>
+          ) : (
+            <>
+              <View style={{height: 130}}>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                  data={images}
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({item, index}) => {
+                    return (
+                      <View
+                        key={index}
+                        style={{
+                          height: 100,
+                          width: 100,
+                          margin: 5,
+                        }}>
+                        <Image
+                          style={{
+                            height: 100,
+                            width: 100,
+                            borderRadius: 30,
+                            padding: 3,
+                          }}
+                          source={{uri: item.path}}
+                        />
+                        <TouchableOpacity
+                          onPress={() => handleRemoveItem(index)}
+                          style={styles.btn}>
+                          <Text style={styles.btntext}>REMOVE</Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+            </>
+          )}
         </View>
       </View>
       <View style={{height: hp('10%')}}>

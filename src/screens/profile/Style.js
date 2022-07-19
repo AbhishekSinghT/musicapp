@@ -1,5 +1,8 @@
-import { StyleSheet } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {StyleSheet} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 export const styles = StyleSheet.create({
   container: {
@@ -30,23 +33,23 @@ export const styles = StyleSheet.create({
     marginLeft: hp('2%'),
     fontSize: hp('2%'),
     color: '#fff',
-    fontWeight: '900'
+    fontWeight: '900',
   },
   btnpre: {
     borderWidth: wp('0.4%'),
     height: hp('3%'),
-    width:wp('23%'),
-    flexDirection:'row',
-    alignItems:'center',
+    width: wp('23%'),
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRadius: hp('50%'),
     borderColor: '#47dded',
     paddingHorizontal: hp('0.8%'),
-    marginLeft: hp('1%')
+    marginLeft: hp('1%'),
   },
   btncontainer: {
     flexDirection: 'row',
-    marginTop: hp('2%')
+    marginTop: hp('2%'),
   },
   btntext: {
     color: '#47dded',
@@ -55,34 +58,46 @@ export const styles = StyleSheet.create({
   btnedit: {
     borderWidth: wp('0.4%'),
     height: hp('3%'),
-    width:wp('17%'),
-    flexDirection:'row',
-    alignItems:'center',
+    width: wp('17%'),
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRadius: hp('50%'),
     borderColor: '#47dded',
     paddingHorizontal: hp('0.6%'),
-    marginLeft: hp('1%')
+    marginLeft: hp('1%'),
   },
   footer: {
     margin: hp('3%'),
   },
   contact: {
     backgroundColor: '#bbe8f0',
-    height:hp('17%'),
-    resizeMode:'containe',
+    height: hp('17%'),
+    resizeMode: 'containe',
     marginBottom: hp('3%'),
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   favContact: {
     flexDirection: 'row',
-    flex:1,
+    flex: 1,
     alignItems: 'center',
     marginBottom: hp('2.5%'),
   },
   contactline: {
     flex: 1,
     height: hp('0.4%'),
-    backgroundColor: '#de800d'
-  }
+    backgroundColor: '#de800d',
+  },
+  rowContainer: {
+    height: hp('10%'),
+    margin: hp('5%'),
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  rowTxt: {
+    fontSize: hp('1.8%'),
+    fontWeight: '900',
+    color: '#0d709e',
+  },
 });

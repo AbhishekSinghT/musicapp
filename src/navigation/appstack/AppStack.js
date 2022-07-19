@@ -86,6 +86,7 @@ export default function AppStack() {
         <Drawer.Screen name="Player" component={Player} />
         <Drawer.Screen name="Post" component={Post} />
         <Drawer.Screen name="Feed" component={Feed} />
+        <Drawer.Screen name="Profile" component={Profile} />
       </Drawer.Navigator>
     </>
   );

@@ -44,4 +44,34 @@ export const styles = StyleSheet.create({
     color: '#044b80',
     paddingVertical: hp('1.5%'),
   },
+  empContainer: {
+    height: hp('70%'),
+    width: wp('100%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  empTxt: {
+    fontSize: hp('2%'),
+    color: 'black',
+    fontWeight: '600',
+  },
+  scrollContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  usericon: {
+    borderRadius: hp('50%'),
+    height: hp('5%'),
+    width: wp('10%'),
+    aspectRatio: 1 / 1,
+    marginRight: hp('1%'),
+  },
+  userimage: {
+    height: hp('5%'),
+    width: wp('10%'),
+    borderRadius: hp('50%'),
+    resizeMode: 'contain',
+    aspectRatio: 1 / 1,
+  },
 });
