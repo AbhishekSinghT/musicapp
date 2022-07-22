@@ -23,7 +23,7 @@ import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-crop-picker';
 import {LogBox} from 'react-native';
 import {AuthContext} from '../../navigation/authprovider/AuthProvider';
-// import DocumentPicker from 'react-native-document-picker';
+import Progress from '../../components/progress/Progress';
 
 LogBox.ignoreLogs([
   'ViewPropTypes will be removed',
@@ -36,37 +36,24 @@ const Post = ({navigation}) => {
   const [transferred, setTransferred] = useState(0);
   const [addImages, setAddimages] = useState(null);
   const [headline, setHeadline] = useState(true);
-  const [value, setValue] = useState('');
+  const [addValue, setAddValue] = useState('');
   const [focus, setFocus] = useState('');
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState('');
 
   const {user} = useContext(AuthContext);
 
   const takePhotoFromCamera = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.type.allFile],
-      });
-      console.log();
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-      } else {
-        throw err;
-      }
-    }
-    // ImagePicker.openCamera({
-    //   multiple: true,
-    //   width: 300,
-    //   height: 300,
-    //   cropping: true,
-    // }).then(image => {
-    //   const imageUri = image.path;
-    //   setAddimages(imageUri);
-    //   console.log(imageUri);
-    // });
+    ImagePicker.openCamera({
+      multiple: true,
+      width: 300,
+      height: 300,
+      cropping: true,
+    }).then(image => {
+      const imageUri = image.path;
+      setAddimages(imageUri);
+    });
   };
   const handleRemoveItem = index => {
-    console.log(index);
     let newList = [...images];
     if (index !== -1) {
       newList.splice(index, 1);
@@ -78,22 +65,25 @@ const Post = ({navigation}) => {
   const choosePhotoFromLibrary = () => {
     let imagelist = [];
     ImagePicker.openPicker({
-      width: 300,
+      mediaType: 'any',
+      compressVideoPreset: 'HighestQuality',
       multiple: true,
-      height: 300,
-      cropping: true,
       compressImageQuality: 0.8,
-      mediaType: 'photo',
     })
       .then(response => {
         response.map(image => {
           imagelist.push({
             path: image.path,
+            type: image.mime,
           });
         });
         setImages(imagelist);
       })
-      .catch(e => console.log('Error:', e.message));
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+        }
+      });
   };
 
   const chooseMainPhoto = () => {
@@ -103,10 +93,16 @@ const Post = ({navigation}) => {
       cropping: true,
       compressImageQuality: 0.8,
       mediaType: 'photo',
-    }).then(image => {
-      const imageUri = image.path;
-      setAddimages(imageUri);
-    });
+    })
+      .then(image => {
+        const imageUri = image.path;
+        setAddimages(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+        }
+      });
   };
 
   const handleOnblur = () => {
@@ -118,13 +114,12 @@ const Post = ({navigation}) => {
   };
 
   const getUser = async () => {
-    const currentUser = await firestore()
+    await firestore()
       .collection('users')
       .doc(user.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          // console.log('User Data', userData.displayName);
           setUserData(documentSnapshot.data());
         }
       });
@@ -135,30 +130,34 @@ const Post = ({navigation}) => {
       return item.path;
     });
     if (addImages != null) {
-      moveFile(addImages);
+      await moveFile(addImages);
     }
     if (images != undefined) {
       for (var i = 0; i < newData.length; i++) {
         await moveFile(newData[i]);
       }
     }
-    getUser();
+    await getUser();
     firestore()
       .collection('posts')
       .add({
-        profile: userData ? userData.userImg : null,
-        userName: userData ? userData.displayName : null,
+        postImg: imageArr,
+        profile: userData.userImg,
+        userName: userData.displayName,
         userId: user.uid,
         heading: focus,
-        post: value,
-        postImg: imageArr,
+        postheader: addValue,
         postTime: firestore.Timestamp.fromDate(new Date()),
-        likes: null,
-        comments: null,
+        likes: [],
+        comments: [],
       })
       .then(() => {
+        setAddValue('');
+        setFocus('');
+        setAddimages(null);
+        setImages([]);
         Alert.alert('Post uploaded');
-        console.log('User added!');
+        navigation.navigate('Feed');
       })
       .catch(error => {
         console.log('something went worng with added post', error);
@@ -189,13 +188,8 @@ const Post = ({navigation}) => {
       );
     });
     try {
-      console.log('entered');
       await task;
       const url = await storageRef.getDownloadURL();
-      setValue('');
-      setFocus('');
-      setAddimages(null);
-      setImages([]);
       setUploading(false);
       imageArr.push(url);
     } catch (e) {
@@ -204,20 +198,20 @@ const Post = ({navigation}) => {
     }
   };
   useEffect(() => {
+    getUser();
     const unsubscribe = navigation.addListener('focus', () => {
-      setValue('');
+      setAddValue('');
       setFocus('');
       setAddimages(null);
       setImages([]);
     });
     return unsubscribe;
-
-    // getUser();
   }, [navigation]);
+
   const SendBtn = () => {
     return (
       <>
-        {addImages || value || focus ? (
+        {addImages || addValue || focus ? (
           <>
             <TouchableOpacity onPress={submitPost} style={styles.btnsend}>
               <Text
@@ -239,6 +233,11 @@ const Post = ({navigation}) => {
 
   return (
     <View style={{flex: 1}}>
+      {uploading ? (
+        <Progress text={transferred} />
+      ) : (
+        <View style={{display: 'none'}}></View>
+      )}
       <View>
         <Greeting name="WRITE " style={styles.title} title="POST" />
         <DrawerBtn onPress={() => navigation.toggleDrawer()} />
@@ -251,8 +250,8 @@ const Post = ({navigation}) => {
               <View style={styles.imgcircle}>
                 <Image
                   style={{
-                    width: 150,
-                    height: 150,
+                    width: wp('40%'),
+                    height: hp('40%'),
                     resizeMode: 'contain',
                   }}
                   source={{uri: addImages}}
@@ -306,9 +305,9 @@ const Post = ({navigation}) => {
           )}
         </View>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
-          <View>
+          <View style={{flex: 1}}>
             <TextInput
-              value={value}
+              value={addValue}
               placeholderTextColor="black"
               autoFocus={true}
               placeholder="What's on your mind?"
@@ -316,17 +315,18 @@ const Post = ({navigation}) => {
               maxLength={300}
               selectionColor="gray"
               style={styles.postinput}
-              onChangeText={text => setValue(text)}
+              onChangeText={text => setAddValue(text)}
             />
           </View>
-          <Text style={{fontSize: 15, color: 'black'}}>
-            Character Left : {value.length === null ? 0 : value.length} /300
+          <Text style={{fontSize: hp('2%'), color: 'black'}}>
+            Character Left : {addValue.length === null ? 0 : addValue.length}
+            /300
           </Text>
           {images == false ? (
             <>{null}</>
           ) : (
             <>
-              <View style={{height: 130}}>
+              <View style={{height: hp('13%'), height: hp('16%')}}>
                 <FlatList
                   showsHorizontalScrollIndicator={false}
                   horizontal
@@ -337,23 +337,30 @@ const Post = ({navigation}) => {
                       <View
                         key={index}
                         style={{
-                          height: 100,
-                          width: 100,
-                          margin: 5,
+                          height: hp('10%'),
+                          width: wp('20%'),
+                          margin: hp('1%'),
                         }}>
                         <Image
                           style={{
-                            height: 100,
-                            width: 100,
-                            borderRadius: 30,
-                            padding: 3,
+                            height: hp('10%'),
+                            width: wp('20%'),
+                            borderRadius: hp('3%'),
+                            padding: hp('1%'),
                           }}
                           source={{uri: item.path}}
                         />
                         <TouchableOpacity
                           onPress={() => handleRemoveItem(index)}
                           style={styles.btn}>
-                          <Text style={styles.btntext}>REMOVE</Text>
+                          <Text
+                            style={{
+                              fontSize: hp('2%'),
+                              color: 'black',
+                              marginTop: hp('1%'),
+                            }}>
+                            REMOVE
+                          </Text>
                         </TouchableOpacity>
                       </View>
                     );

@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#09929c',
-    height: hp('30%'),
+    height: hp('28%'),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -40,6 +40,7 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     color: '#0d709e',
+    fontSize: hp('2%'),
   },
   btnsend: {
     position: 'absolute',

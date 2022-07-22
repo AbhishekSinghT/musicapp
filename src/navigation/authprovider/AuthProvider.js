@@ -29,6 +29,7 @@ export const AuthProvider = ({children}) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
+                    uid: auth().currentUser.uid,
                     displayName: name,
                     website: '',
                     email: email,

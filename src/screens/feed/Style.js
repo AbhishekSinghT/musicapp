@@ -29,8 +29,8 @@ export const styles = StyleSheet.create({
   },
   btnfooter: {
     flexDirection: 'row',
-    paddingHorizontal: hp('0.5%'),
-    alignItems: 'center',
+    paddingHorizontal: hp('1%'),
+    // alignItems: 'center',
   },
   headingtxt: {
     fontSize: hp('2%'),
@@ -73,5 +73,12 @@ export const styles = StyleSheet.create({
     borderRadius: hp('50%'),
     resizeMode: 'contain',
     aspectRatio: 1 / 1,
+  },
+  likesTxt: {
+    fontWeight: '700',
+    color: 'black',
+    fontSize: hp('2'),
+    marginLeft: hp('0.8'),
+    color: 'gray',
   },
 });
