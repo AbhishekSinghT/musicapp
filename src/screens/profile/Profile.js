@@ -5,6 +5,7 @@ import {
   Alert,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -31,51 +32,65 @@ const Profile = ({navigation}) => {
   const {user} = useContext(AuthContext);
 
   const Sheet = useRef(null);
+  const optionSheet = useRef(null);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [users, setUsers] = useState(null);
-  const [userData, setUserData] = useState(null);
+  // const [users, setUsers] = useState(true);
+  const [userData, setUserData] = useState('');
+  const [posts, setPosts] = useState(null);
 
   const chooseMainPhoto = () => {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
       cropping: true,
-      compressImageQuality: 0.8,
+      compressImageQuality: 1,
       mediaType: 'photo',
-    }).then(image => {
-      Alert.alert('Alert Title', 'My Alert Msg', [
-        {
-          text: 'Uplaod',
-          onPress: handleUpdate,
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ]);
-      const imageUri = image.path;
-      setImage(imageUri);
-    });
+    })
+      .then(image => {
+        const imageUri = image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+        }
+      });
   };
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
-      multiple: true,
       width: 300,
       height: 300,
       cropping: true,
-    }).then(response => {
-      console.log(response);
-      const imageUri =
-        Platform.OS === 'ios' ? response.sourceURL : response.path;
-      console.log(imageUri);
-    });
+      mediaType: 'photo',
+    })
+      .then(response => {
+        const imageUri = response.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+        }
+      });
   };
   const sheetOpen = () => {
     Sheet.current.open();
   };
 
+  const sheetClose = () => {
+    Sheet.current.close();
+  };
+  const removeSheetOpen = () => {
+    optionSheet.current.open();
+  };
+  const removeSheetClose = () => {
+    optionSheet.current.close();
+  };
+
   const getUser = async () => {
-    const currentUser = await firestore()
+    await firestore()
       .collection('users')
       .doc(user.uid)
       .get()
@@ -86,31 +101,44 @@ const Profile = ({navigation}) => {
         }
       });
   };
+
+  const handleRemove = async () => {
+    firestore()
+      .collection('users')
+      .doc(user.uid)
+      .update({
+        userImg: '',
+      })
+      .then(() => {
+        Alert.alert('Profile Picture Has Been Remove Successfully!');
+        removeSheetClose();
+        getUser();
+      });
+  };
+
   const handleUpdate = async () => {
     let imgUrl = await uploadImage();
-    firestore()
+    await firestore()
       .collection('users')
       .doc(user.uid)
       .update({
         userImg: imgUrl,
       })
       .then(() => {
-        console.log('User Updated!');
-        Alert.alert(
-          'Profile Updated!',
-          'Your profile has been updated successfully.',
-        );
+        Alert.alert('Profile Picture Updated!');
+        setImage(null);
+        sheetClose();
+        getUser();
       });
   };
 
   const uploadImage = async () => {
+    setImage(null);
     if (image == null) {
       return null;
     }
     const uploadUri = image;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
-    // Add timestamp to File Name
     const extension = filename.split('.').pop();
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
@@ -124,7 +152,6 @@ const Profile = ({navigation}) => {
       console.log(
         `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
       );
-
       setTransferred(
         Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
           100,
@@ -134,7 +161,7 @@ const Profile = ({navigation}) => {
     try {
       await task;
       const url = await storageRef.getDownloadURL();
-      setUsers(url);
+      console.log('url found', url);
       setUploading(false);
       setImage(null);
       return url;
@@ -145,10 +172,25 @@ const Profile = ({navigation}) => {
   };
   useEffect(() => {
     getUser();
+    // fetchPosts();
+    // Updatepro();
   }, []);
+
   return (
     <>
       <View style={styles.container}>
+        {image == null ? (
+          <>{null}</>
+        ) : (
+          Alert.alert('Do Want To Upload', 'Your Profile Picture', [
+            {
+              text: 'cancel',
+              onPress: sheetClose,
+              style: 'cancel',
+            },
+            {text: 'upload', onPress: handleUpdate},
+          ])
+        )}
         <View style={{flex: 1}}>
           <Greeting
             name="YOUR "
@@ -158,12 +200,12 @@ const Profile = ({navigation}) => {
           <DrawerBtn onPress={() => navigation.toggleDrawer()} />
 
           <View style={styles.profilecontaine}>
-            {userData == null ? (
+            {userData.userImg ? (
               <>
                 <TouchableOpacity
                   style={{margin: hp('8%')}}
-                  onPress={() => sheetOpen()}>
-                  <UserPhoto source={require('../../assets/images/user.png')} />
+                  onPress={() => removeSheetOpen()}>
+                  <UserPhoto source={{uri: userData.userImg}} />
                 </TouchableOpacity>
               </>
             ) : (
@@ -171,22 +213,18 @@ const Profile = ({navigation}) => {
                 <TouchableOpacity
                   style={{margin: hp('8%')}}
                   onPress={() => sheetOpen()}>
-                  <UserPhoto source={{uri: userData.userImg}} />
+                  <UserPhoto source={require('../../assets/images/user.png')} />
                 </TouchableOpacity>
               </>
             )}
             <View style={{marginLeft: hp('8%')}}>
               <View style={styles.userinfo}>
                 <Icon name="user" size={wp('5%')} color="#47dded" />
-                <Text style={styles.userinfoname}>
-                  {userData ? userData.displayName : null}
-                </Text>
+                <Text style={styles.userinfoname}>{userData.displayName}</Text>
               </View>
               <View style={styles.userinfo}>
                 <Icon name="envelope" size={wp('4%')} color="#47dded" />
-                <Text style={styles.userinfotext}>
-                  {userData ? userData.email : null}
-                </Text>
+                <Text style={styles.userinfotext}>{userData.email}</Text>
               </View>
               <View style={styles.userinfo}>
                 <Icon name="globe" size={wp('4.7%')} color="#47dded" />
@@ -267,7 +305,7 @@ const Profile = ({navigation}) => {
         <View>
           <RBSheet
             ref={Sheet}
-            height={hp('20%')}
+            height={hp('30%')}
             openDuration={250}
             customStyles={{
               container: {
@@ -275,6 +313,27 @@ const Profile = ({navigation}) => {
                 borderTopRightRadius: 20,
               },
             }}>
+            {uploading ? (
+              <View
+                style={{
+                  height: hp('4%'),
+                  marginTop: hp('2%'),
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}>
+                <Text
+                  style={{
+                    color: '#0d709e',
+                    fontSize: hp('2%'),
+                    fontWeight: '900',
+                  }}>
+                  {transferred} % Completed!
+                </Text>
+              </View>
+            ) : (
+              <View></View>
+            )}
+
             <View style={styles.rowContainer}>
               <TouchableOpacity
                 onPress={takePhotoFromCamera}
@@ -287,6 +346,37 @@ const Profile = ({navigation}) => {
                 style={{alignItems: 'center'}}>
                 <Ionicons name="albums" color="#0d709e" size={hp('5%')} />
                 <Text style={styles.rowTxt}>Gallery</Text>
+              </TouchableOpacity>
+            </View>
+          </RBSheet>
+          <RBSheet
+            ref={optionSheet}
+            height={hp('30%')}
+            openDuration={250}
+            customStyles={{
+              container: {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              },
+            }}>
+            <View style={styles.rowContainer}>
+              <TouchableOpacity
+                onPress={handleRemove}
+                style={{alignItems: 'center'}}>
+                <Ionicons
+                  name="person-remove-outline"
+                  color="#0d709e"
+                  size={hp('5%')}
+                />
+                <Text style={styles.rowTxt}>Remove</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  sheetOpen(), removeSheetClose();
+                }}
+                style={{alignItems: 'center'}}>
+                <Ionicons name="person-add" color="#0d709e" size={hp('5%')} />
+                <Text style={styles.rowTxt}>Profile change</Text>
               </TouchableOpacity>
             </View>
           </RBSheet>
