@@ -1,5 +1,5 @@
 import {View, StatusBar} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Providers from './src/navigation';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';

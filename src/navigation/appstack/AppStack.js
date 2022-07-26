@@ -56,7 +56,7 @@ const StackNav = ({route, navigation}) => {
   return (
     <>
       <Stack.Navigator
-        initialRouteName="Feed"
+        initialRouteName="Profile"
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="ImageScreen" component={ImageScreen} />

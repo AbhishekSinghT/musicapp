@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
+  Alert,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import React, {
@@ -33,6 +34,8 @@ import {AuthContext} from '../../navigation/authprovider/AuthProvider';
 import {v4 as uuidv4} from 'uuid';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Comment from '../../components/commentbox/Comment';
+import Commentlist from '../../components/commentlist/Commentlist';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 const wait = timeout => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -40,7 +43,7 @@ const wait = timeout => {
 
 var list = [];
 const Feed = ({navigation}) => {
-  const Sheet = useRef(null);
+  const Sheet = useRef();
   const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +54,9 @@ const Feed = ({navigation}) => {
   const [comment, setComment] = useState('');
   const [liked, setLiked] = useState('');
   const [userData, setUserData] = useState('');
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [postId, setPostId] = useState('');
+  const [commentData, setCommentData] = useState('');
+  const netInfo = useNetInfo();
 
   const onRefresh = useCallback(() => {
     fetchPosts();
@@ -59,49 +64,28 @@ const Feed = ({navigation}) => {
     setIsRefreshing(true);
     wait(2000).then(() => setIsRefreshing(false));
   }, []);
-  const fetchPosts = async () => {
-    list = [];
-    try {
-      await firestore()
-        .collection('posts')
-        .orderBy('postTime', 'desc')
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            const {
-              userName,
-              heading,
-              userId,
-              postheader,
-              profile,
-              postImg,
-              postTime,
-              likes,
-              comments,
-            } = doc.data();
-            list.push({
-              id: doc.id,
-              userId: userId,
-              userName: userName,
-              heading: heading,
-              profile: profile,
-              post: postheader,
-              postImg: postImg,
-              postTime: postTime,
-              likes: likes,
-              comments: comments,
-              liked: false,
-            });
-
-            setPosts(list);
-            if (loading) {
-              setLoading(false);
-            }
-          });
-        });
-    } catch (e) {
-      console.log(e);
-    }
+  const fetchPosts = () => {
+    firestore()
+      .collection('posts')
+      .orderBy('postTime', 'desc')
+      .onSnapshot({
+        next: querySnapshot => {
+          const tasks = querySnapshot.docs.map(docSnapshot => ({
+            id: docSnapshot.id,
+            userId: docSnapshot.data().userId,
+            userName: docSnapshot.data().userName,
+            heading: docSnapshot.data().heading,
+            profile: docSnapshot.data().profile,
+            post: docSnapshot.data().postheader,
+            postImg: docSnapshot.data().postImg,
+            postTime: docSnapshot.data().postTime,
+            likes: docSnapshot.data().likes,
+            comments: docSnapshot.data().comments,
+          }));
+          setPosts(tasks);
+        },
+        error: error => console.log(error),
+      });
   };
 
   const toggleModal = () => {
@@ -113,44 +97,60 @@ const Feed = ({navigation}) => {
       .doc(user.uid)
       .get()
       .then(documentSnapshot => {
+        setUserData(documentSnapshot.data());
+      });
+  };
+  const onClose = () => {
+    setCommentData('');
+    setPostId('');
+  };
+
+  const getComment = async itemId => {
+    await firestore()
+      .collection('posts')
+      .doc(itemId)
+      .get()
+      .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          setUserData(documentSnapshot.data());
+          setCommentData(documentSnapshot.data().comments);
         }
+      });
+  };
+
+  const handleComment = async () => {
+    await firestore()
+      .collection('posts')
+      .doc(postId)
+      .update({
+        comments: firestore.FieldValue.arrayUnion({
+          userId: user.uid,
+          profile: userData.userImg,
+          userName: userData.displayName,
+          comment: comment,
+          // commentId: uuidv4(),
+          commentTime: firestore.Timestamp.fromDate(new Date()),
+        }),
       })
       .then(() => {
         setComment('');
+        getComment(postId);
+        Alert.alert('Comments Added Successfully!');
       });
   };
-  const handleComment = e => {
-    if (e.key === 'Enter') {
-      firestore()
-        .collection('posts')
-        .doc(posts[index].id)
-        .update({
-          comments: firestore.FieldValue.arrayUnion({
-            userId: user.uid,
-            profile: userData.userImg,
-            userName: userData.displayName,
-            comment: comment,
-            commentId: uuidv4(),
-            commentTime: firestore.Timestamp.fromDate(new Date()),
-          }),
-        })
-        .then(() => {
-          Alert.alert('Profile Picture Has Been Remove Successfully!');
-          removeSheetClose();
-          getUser();
-        });
+  useEffect(() => {
+    if (!netInfo.isConnected) {
+      setLoading(true);
+      console.log('disconnected');
+    } else {
+      setLoading(false);
+      console.log('connected');
     }
-  };
+  }, [netInfo.isConnected]);
 
   useEffect(() => {
     fetchPosts();
     getUser();
   }, []);
-  useEffect(() => {
-    fetchPosts();
-  }, [ignored]);
 
   const EmptyPost = () => {
     return (
@@ -169,29 +169,24 @@ const Feed = ({navigation}) => {
       if (likes?.includes(user.uid)) {
         postRef.update({
           likes: firestore.FieldValue.arrayRemove(user.uid),
-          liked: false,
         });
       } else {
         postRef.update({
           likes: firestore.FieldValue.arrayUnion(user.uid),
-          liked: true,
         });
       }
-      forceUpdate();
     };
 
     return (
       <TouchableOpacity onPress={likeButton} style={styles.btnfooter}>
         <Ionicons
           name={likes?.includes(user.uid) ? 'heart' : 'heart-outline'}
-          // name={console.log(likes == user.uid)}
           size={hp('3%')}
           color="#66cbd9"
         />
       </TouchableOpacity>
     );
   };
-  // console.log('render app.js');
 
   return (
     <>
@@ -277,7 +272,7 @@ const Feed = ({navigation}) => {
                             </Text>
                             <Ionicons
                               name="md-ellipse"
-                              color={user != null ? 'red' : 'green'}
+                              color={user != null ? 'green' : 'red'}
                             />
                           </View>
                         </View>
@@ -363,14 +358,20 @@ const Feed = ({navigation}) => {
                             {item.likes ? item.likes.length : '0'}
                           </Text>
                           <TouchableOpacity
-                            onPress={() => Sheet.current.open()}
+                            onPress={() => {
+                              getComment(item.id);
+                              setPostId(item.id);
+                              Sheet.current.open();
+                            }}
                             style={styles.btnfooter}>
                             <MaterialCommunityIcons
                               name="comment-outline"
                               size={hp('3%')}
                               color="#66cbd9"
                             />
-                            <Text style={styles.likesTxt}>120</Text>
+                            <Text style={styles.likesTxt}>
+                              {item.comments ? item.comments.length : '0'}
+                            </Text>
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => console.log(item.id)}
@@ -388,8 +389,11 @@ const Feed = ({navigation}) => {
                 />
               </View>
               <RBSheet
+                closeDuration={200}
+                animationType="slide"
                 ref={Sheet}
-                height={hp('100%')}
+                onClose={onClose}
+                height={hp('98%')}
                 openDuration={250}
                 customStyles={{
                   container: {
@@ -399,27 +403,43 @@ const Feed = ({navigation}) => {
                 }}>
                 <View style={{flex: 1}}>
                   <View style={{flex: 1}}>
+                    <Text
+                      style={{
+                        alignSelf: 'center',
+                        paddingVertical: hp('2%'),
+                        fontSize: hp('2.5%'),
+                        color: '#0d709e',
+                      }}>
+                      comments
+                    </Text>
+                    <View
+                      style={{
+                        borderTopWidth: 2,
+                        borderColor: '#dcdce3',
+                      }}
+                    />
                     <FlatList
-                      data={posts}
+                      data={commentData}
                       keyExtractor={(item, index) => String(index)}
                       renderItem={({item, index}) => {
                         return (
-                          <View
-                            key={index}
-                            style={{
-                              borderWidth: 2,
-                              height: hp('10%'),
-                              margin: hp('1%'),
-                              flexDirection: 'row',
-                            }}>
-                            <Text>{item.heading}</Text>
+                          <View key={index}>
+                            <Commentlist
+                              source={{uri: item.profile}}
+                              username={item.userName}
+                              usercomment={item.comment}
+                            />
                           </View>
                         );
                       }}
                     />
                   </View>
                 </View>
-                <Comment data={posts} />
+                <Comment
+                  value={comment}
+                  onChangeText={text => setComment(text)}
+                  onPress={handleComment}
+                />
               </RBSheet>
             </>
           )}

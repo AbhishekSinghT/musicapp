@@ -14,7 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Comment = porps => {
+const Comment = props => {
   const [keyboardStatus, setKeyboardStatus] = useState(false);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -46,11 +46,11 @@ const Comment = porps => {
             width: wp('100%'),
             paddingHorizontal: hp('1%'),
             alignItems: 'center',
-            marginBottom: keyboardStatus ? hp('5%') : hp('0.5%'),
+            marginBottom: keyboardStatus ? hp('5%') : hp('2%'),
           }}>
           <TextInput
             keyboardType="default"
-            value={porps.value}
+            value={props.value}
             placeholderTextColor="black"
             autoFocus={true}
             placeholder="Write a comment..."
@@ -60,13 +60,16 @@ const Comment = porps => {
             style={{
               backgroundColor: '#e0dfdc',
               borderRadius: hp('5%'),
+              paddingVertical: hp('1%'),
+              fontSize: hp('2%'),
               width: wp('80%'),
               alignSelf: 'center',
               paddingHorizontal: hp('2%'),
             }}
-            onChangeText={porps.onPress}
+            onChangeText={props.onChangeText}
           />
           <TouchableOpacity
+            onPress={props.onPress}
             style={{
               backgroundColor: '#0d709e',
               width: wp('100%'),
