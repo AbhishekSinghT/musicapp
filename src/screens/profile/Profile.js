@@ -28,17 +28,19 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
+
 const Profile = ({navigation}) => {
   const {user} = useContext(AuthContext);
-
   const Sheet = useRef(null);
   const optionSheet = useRef(null);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  // const [users, setUsers] = useState(true);
   const [userData, setUserData] = useState('');
   const [posts, setPosts] = useState(null);
+
+  
 
   const chooseMainPhoto = () => {
     ImagePicker.openPicker({
@@ -161,7 +163,6 @@ const Profile = ({navigation}) => {
     try {
       await task;
       const url = await storageRef.getDownloadURL();
-      console.log('url found', url);
       setUploading(false);
       setImage(null);
       return url;
@@ -172,8 +173,6 @@ const Profile = ({navigation}) => {
   };
   useEffect(() => {
     getUser();
-    // fetchPosts();
-    // Updatepro();
   }, []);
 
   return (
